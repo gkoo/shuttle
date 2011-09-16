@@ -192,16 +192,18 @@ $(function() {
                              'City',
                              'Zip'],
         i, len, fieldName, fieldValue, newDataItem, initialLocation, 
-        busmarker, trafficlayer, browserSupportFlag = false;
+        busmarker, trafficlayer, youmarker, browserSupportFlag = false;
     
-    /*if (navigator.geolocation) {
+    if (navigator.geolocation) {
       browserSupportFlag = true;
       navigator.geolocation.getCurrentPosition(function(position) {
-        map.addOverlay(new GMarker(new GLatLng(position.coords.latitude, position.coords.longitude)));
+        youmarker = new google.maps.Marker({
+          position: new google.maps.LatLng(position.coords.latitude, position.coords.longitude)
+        });
       })
     } else {
       browserSupportFlag = false;
-    }*/
+    }
 
     $.ajax(distanceProxyUrl, {
       crossDomain: true,
