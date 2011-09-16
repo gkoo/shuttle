@@ -4,6 +4,7 @@ $(function() {
       closestListElem   = $('#closestData'),
       li_latlng         = '37.423327,-122.071152',
       map,
+      busmarker, youmarker,
       stops = [
         {
           name: "Lombard & Fillmore",
@@ -154,10 +155,10 @@ $(function() {
     if (!distanceData) { return; }
 
     if (distanceData.distance && distanceData.distance.text) {
-      distanceListElem.append($('<li>').text('Distance from LinkedIn: ' + distanceData.distance.text));
+      distanceListElem.append($('<li>').html('<strong>Distance from LinkedIn:</strong> ' + distanceData.distance.text));
     }
     if (distanceData.duration && distanceData.duration.text) {
-      distanceListElem.append($('<li>').text('Time to reach LinkedIn: ' + distanceData.duration.text));
+      distanceListElem.append($('<li>').html('<strong>Time to reach LinkedIn:</strong> ' + distanceData.duration.text));
     }
   },
 
@@ -166,13 +167,13 @@ $(function() {
     if (!distanceData) { return; }
 
     if (data.name) {
-      closestListElem.append($('<li>').text('Closest stop to the shuttle: ' + data.name));
+      closestListElem.append($('<li>').html('<strong>Closest stop to the shuttle:</strong> ' + data.name));
     }
     if (distanceData.distance && distanceData.distance.text) {
-      closestListElem.append($('<li>').text('Distance: ' + distanceData.distance.text));
+      closestListElem.append($('<li>').html('<strong>Distance:</strong> ' + distanceData.distance.text));
     }
     if (distanceData.duration && distanceData.duration.text) {
-      closestListElem.append($('<li>').text('Time to reach: ' + distanceData.duration.text));
+      closestListElem.append($('<li>').html('<strong>Time to reach:</strong> ' + distanceData.duration.text));
     }
   },
 
@@ -192,7 +193,7 @@ $(function() {
                              'City',
                              'Zip'],
         i, len, fieldName, fieldValue, newDataItem, initialLocation, 
-        busmarker, trafficlayer, youmarker, browserSupportFlag = false;
+        browserSupportFlag = false;
     
     if (navigator.geolocation) {
       browserSupportFlag = true;
@@ -204,7 +205,7 @@ $(function() {
           title: "You're here!",
           animation: google.maps.Animation.BOUNCE
         });
-      })
+      });
     } else {
       browserSupportFlag = false;
     }
@@ -239,7 +240,7 @@ $(function() {
       fieldName = relevantFields[i];
       if (fieldName) {
         fieldValue = attr[fieldName];
-        newDataItem = $('<li>').text(fieldName + ': ' + fieldValue);
+        newDataItem = $('<li>').html('<strong>' + fieldName + ':</strong> ' + fieldValue);
         newDataList.append(newDataItem);
       }
     }
@@ -247,6 +248,31 @@ $(function() {
     addStops();
     
     container.append(newDataList);
+    
+    /*$("#shuttleloc").click(function(e) {
+      e.preventDefault();
+      
+      $.ajax('http://64.87.15.235/networkfleetcar/getfleetgpsinfoextended?u=linked-in&p=linkedin', {
+        crossDomain: true,
+        dataType: 'jsonp',
+        success: function(data, textStatus) {
+          var obj, attr, latitude, longitude, i, len, field, url;
+          if (!data || !data.features || !data.features.length) {
+            return;
+          }
+          attr = data.features[0].attributes;
+          if (!attr) return;
+          map.setCenter(new google.maps.LatLng(attr.Latitude, attr.Longitude));
+        }
+      });
+    });
+    
+    $("#myloc").click(function(e) {
+      e.preventDefault();
+      navigator.geolocation.getCurrentPosition(function(position) {
+        map.setCenter(position.coords.latitude, position.coords.longitude);
+      });
+    })*/
 
     $("#touch-init").remove();
     $("html").removeClass("initial-bootstrapping");
