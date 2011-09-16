@@ -3,7 +3,7 @@ $(function() {
       distanceListElem  = $('#distanceData'),
       closestListElem   = $('#closestData'),
       li_latlng         = '37.423327,-122.071152',
-      map = new GMap2(document.getElementById("map_canvas")),
+      map,
       stops = [
         {
           name: "Lombard & Fillmore",
@@ -191,7 +191,17 @@ $(function() {
                              'StreetName',
                              'City',
                              'Zip'],
-        i, len, fieldName, fieldValue, newDataItem;
+        i, len, fieldName, fieldValue, newDataItem, initialLocation, 
+        busmarker, trafficlayer, browserSupportFlag = false;
+    
+    /*if (navigator.geolocation) {
+      browserSupportFlag = true;
+      navigator.geolocation.getCurrentPosition(function(position) {
+        map.addOverlay(new GMarker(new GLatLng(position.coords.latitude, position.coords.longitude)));
+      })
+    } else {
+      browserSupportFlag = false;
+    }*/
 
     $.ajax(distanceProxyUrl, {
       crossDomain: true,
@@ -204,10 +214,20 @@ $(function() {
       dataType: 'jsonp',
       success: handleClosestStop
     });
-
-    map.setCenter(new GLatLng(latitude, longitude), 13);
-    map.addOverlay(new GMarker(new GLatLng(latitude, longitude)));
-    map.setUIToDefault();
+    
+    map = new google.maps.Map(document.getElementById("map_canvas"),{
+      zoom: 13,
+      center: new google.maps.LatLng(latitude, longitude),
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+    
+    busmarker = new google.maps.Marker({
+      position: new google.maps.LatLng(latitude, longitude),
+      map: map,
+      icon: new google.maps.MarkerImage("img/bauerlimo.png"),
+      title: "Shuttle Current Location",
+      animation: google.maps.Animation.DROP
+    });
 
     for (i=0,len=relevantFields.length; i<len; ++i) {
       fieldName = relevantFields[i];
@@ -219,6 +239,7 @@ $(function() {
     }
 
     addStops();
+    
     container.append(newDataList);
 
     $("#touch-init").remove();
@@ -230,7 +251,11 @@ $(function() {
     for (i=0,len=stops.length;i<len;++i) {
       currStop=stops[i];
       if (currStop) {
-        map.addOverlay(new GMarker(new GLatLng(currStop.location.latitude, currStop.location.longitude)));
+        new google.maps.Marker({
+          position: new google.maps.LatLng(currStop.location.latitude, currStop.location.longitude),
+          map: map,
+          title: currStop.name
+        });
       }
     }
   };
