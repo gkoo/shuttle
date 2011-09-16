@@ -60,8 +60,8 @@ $(function() {
             minutes: 20
           },
           location: {
-            latitude: 37.791388,
-            longitude: -122.422425
+            latitude: 37.762768,
+            longitude: -122.435181
           }
         },
         {
@@ -72,8 +72,8 @@ $(function() {
             minutes: 20
           },
           location: {
-            latitude: 37.791388,
-            longitude: -122.422425
+            latitude: 37.751512,
+            longitude: -122.431866
           }
         },
         {
@@ -84,8 +84,8 @@ $(function() {
             minutes: 20
           },
           location: {
-            latitude: 37.791388,
-            longitude: -122.422425
+            latitude: 37.752284,
+            longitude: -122.418433
           }
         },
         {
@@ -96,8 +96,8 @@ $(function() {
             minutes: 20
           },
           location: {
-            latitude: 37.791388,
-            longitude: -122.422425
+            latitude: 37.748271,
+            longitude: -122.413659
           }
         },
         {
@@ -108,8 +108,8 @@ $(function() {
             minutes: 20
           },
           location: {
-            latitude: 37.791388,
-            longitude: -122.422425
+            latitude: 37.601193,
+            longitude: -122.384852
           }
         },
         {
@@ -120,8 +120,8 @@ $(function() {
             minutes: 20
           },
           location: {
-            latitude: 37.791388,
-            longitude: -122.422425
+            latitude: 37.423301,
+            longitude: -122.071956
           }
         },
         {
@@ -132,8 +132,8 @@ $(function() {
             minutes: 20
           },
           location: {
-            latitude: 37.791388,
-            longitude: -122.422425
+            latitude: 37.419782,
+            longitude: -122.088554
           }
         }
       ];
