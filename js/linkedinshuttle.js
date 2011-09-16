@@ -198,7 +198,11 @@ $(function() {
       browserSupportFlag = true;
       navigator.geolocation.getCurrentPosition(function(position) {
         youmarker = new google.maps.Marker({
-          position: new google.maps.LatLng(position.coords.latitude, position.coords.longitude)
+          position: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
+          map: map,
+          icon: new google.maps.MarkerImage("img/you.png"),
+          title: "You're here!",
+          animation: google.maps.Animation.BOUNCE
         });
       })
     } else {
@@ -226,7 +230,7 @@ $(function() {
     busmarker = new google.maps.Marker({
       position: new google.maps.LatLng(latitude, longitude),
       map: map,
-      icon: new google.maps.MarkerImage("img/bauerlimo.png"),
+      icon: new google.maps.MarkerImage("img/bus.png"),
       title: "Shuttle Current Location",
       animation: google.maps.Animation.DROP
     });
