@@ -1,6 +1,7 @@
 $(function() {
   var container         = $('#container'),
       distanceListElem  = $('#distanceData'),
+      closestListElem   = $('#closestData'),
       li_latlng         = '37.423327,-122.071152',
       map = new GMap2(document.getElementById("map_canvas")),
       stops = [
@@ -136,20 +137,42 @@ $(function() {
             longitude: -122.088554
           }
         }
-      ];
+      ],
+
+  extractDistanceData = function(data) {
+    if (data && data.rows && data.rows[0] && data.rows[0].elements && data.rows[0].elements[0]) {
+      return data.rows[0].elements[0];
+    }
+    else {
+      return null;
+    }
+  },
 
   // Display the distance data from Google Distance Matrix API.
   handleDistanceData = function(data) {
-    var distanceData;
-    if (data && data.rows && data.rows[0] && data.rows[0].elements && data.rows[0].elements[0]) {
-      distanceData = data.rows[0].elements[0];
+    var distanceData = extractDistanceData(data);
+    if (!distanceData) { return; }
 
-      if (distanceData.distance && distanceData.distance.text) {
-        distanceListElem.append($('<li>').text('Distance from LinkedIn: ' + distanceData.distance.text));
-      }
-      if (distanceData.duration && distanceData.duration.text) {
-        distanceListElem.append($('<li>').text('Time to reach LinkedIn: ' + distanceData.duration.text));
-      }
+    if (distanceData.distance && distanceData.distance.text) {
+      distanceListElem.append($('<li>').text('Distance from LinkedIn: ' + distanceData.distance.text));
+    }
+    if (distanceData.duration && distanceData.duration.text) {
+      distanceListElem.append($('<li>').text('Time to reach LinkedIn: ' + distanceData.duration.text));
+    }
+  },
+
+  handleClosestStop = function(data) {
+    var distanceData = extractDistanceData(data);
+    if (!distanceData) { return; }
+
+    if (data.name) {
+      closestListElem.append($('<li>').text('Closest stop to the shuttle: ' + data.name));
+    }
+    if (distanceData.distance && distanceData.distance.text) {
+      closestListElem.append($('<li>').text('Distance: ' + distanceData.distance.text));
+    }
+    if (distanceData.duration && distanceData.duration.text) {
+      closestListElem.append($('<li>').text('Time to reach: ' + distanceData.duration.text));
     }
   },
 
@@ -160,6 +183,7 @@ $(function() {
         latlng            = latitude+','+longitude,
         // Have to proxy Google Distance Matrix API since it doesn't support JSONP
         distanceProxyUrl  = 'http://koo.no.de/distanceproxy/' + encodeURIComponent(latlng) + '/' + encodeURIComponent(li_latlng),
+        closestUrl        = 'http://koo.no.de/closestdistance/' + encodeURIComponent(latlng),
         newDataList       = $('<ul>'),
         relevantFields    = ['MaxSpeed',
                              'AvgSpeed',
@@ -174,7 +198,13 @@ $(function() {
       dataType: 'jsonp',
       success: handleDistanceData
     });
-    
+
+    $.ajax(closestUrl, {
+      crossDomain: true,
+      dataType: 'jsonp',
+      success: handleClosestStop
+    });
+
     map.setCenter(new GLatLng(latitude, longitude), 13);
     map.addOverlay(new GMarker(new GLatLng(latitude, longitude)));
     map.setUIToDefault();
@@ -187,14 +217,14 @@ $(function() {
         newDataList.append(newDataItem);
       }
     }
-    
+
     addStops();
     container.append(newDataList);
 
     $("#touch-init").remove();
     $("html").removeClass("initial-bootstrapping");
-  };
-  
+  },
+
   addStops = function() {
     var i,len,currStop;
     for (i=0,len=stops.length;i<len;++i) {
