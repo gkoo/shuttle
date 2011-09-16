@@ -1,22 +1,46 @@
 $(function() {
-  var googleMapsUrl = 'http://maps.googleapis.com/maps/api/staticmap?zoom=14&size=512x512&maptype=roadmap&sensor=false&markers=color:green%7Clabel:A%7C',
-      container = $('#container'),
+  var container         = $('#container'),
+      distanceListElem  = $('#distanceData'),
+      li_latlng         = '37.423327,-122.071152',
+
+  // Display the distance data from Google Distance Matrix API.
+  handleDistanceData = function(data) {
+    var distanceData;
+    if (data && data.rows && data.rows[0] && data.rows[0].elements && data.rows[0].elements[0]) {
+      distanceData = data.rows[0].elements[0];
+
+      if (distanceData.distance && distanceData.distance.text) {
+        distanceListElem.append($('<li>').text('Distance from LinkedIn: ' + distanceData.distance.text));
+      }
+      if (distanceData.duration && distanceData.duration.text) {
+        distanceListElem.append($('<li>').text('Time to reach LinkedIn: ' + distanceData.duration.text));
+      }
+    }
+  },
 
   handleTrackingData = function(attr) {
     // create map
-    var latitude = attr.Latitude,
-        longitude = attr.Longitude,
-        url = googleMapsUrl + latitude + ',' + longitude,
-        newDataList = $('<ul>'),
-        relevantFields = ['MaxSpeed',
-                          'AvgSpeed',
-                          'InstSpeed',
-                          'StreetName',
-                          'City',
-                          'Zip'],
+    var latitude          = attr.Latitude,
+        longitude         = attr.Longitude,
+        latlng            = latitude+','+longitude,
+        // Have to proxy Google Distance Matrix API since it doesn't support JSONP
+        distanceProxyUrl  = 'http://koo.no.de/distanceproxy/' + encodeURIComponent(latlng) + '/' + encodeURIComponent(li_latlng),
+        newDataList       = $('<ul>'),
+        relevantFields    = ['MaxSpeed',
+                             'AvgSpeed',
+                             'InstSpeed',
+                             'StreetName',
+                             'City',
+                             'Zip'],
         i, len, fieldName, fieldValue, newDataItem,
         map = new GMap2(document.getElementById("map_canvas"));
-      
+
+    $.ajax(distanceProxyUrl, {
+      crossDomain: true,
+      dataType: 'jsonp',
+      success: handleDistanceData
+    });
+
     map.setCenter(new GLatLng(latitude, longitude), 13);
     map.addOverlay(new GMarker(new GLatLng(latitude, longitude)));
     map.setUIToDefault();
@@ -29,9 +53,9 @@ $(function() {
         newDataList.append(newDataItem);
       }
     }
-    
+
     container.append(newDataList);
-    
+
     $("#touch-init").remove();
     $("html").removeClass("initial-bootstrapping");
   };
