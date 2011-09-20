@@ -12,7 +12,7 @@
     <meta name="apple-mobile-web-app-capable" content="no">
     <!--Splash screen CSS -->
     <style type="text/css">
-      html.initial-bootstrapping{background-color:#333;background-image:-webkit-gradient(radial,center 40%,10,center center,200,from(#444),to(#000));height:100%}#in-bug{position:absolute;-webkit-box-shadow:0 0 20px #111;-moz-box-shadow:0 0 20px #111;box-shadow:0 0 20px #111;border-radius:10px}#spinner{position:absolute;margin-left:-20px;left:50%;-webkit-animation-name:rotateThis;-webkit-animation-duration:1s;-webkit-animation-iteration-count:infinite;-webkit-animation-timing-function:linear}@-webkit-keyframes rotateThis{from{-webkit-transform:rotate(0deg)}to{-webkit-transform:rotate(360deg)}}
+      html.initial-bootstrapping{background-color:#333;background-image:-webkit-gradient(radial,center 40%,10,center center,200,from(#444),to(#000));height:100%}html.initial-bootstrapping a, html.initial-bootstrapping select{display:none;}#in-bug{position:absolute;-webkit-box-shadow:0 0 20px #111;-moz-box-shadow:0 0 20px #111;box-shadow:0 0 20px #111;border-radius:10px}#spinner{position:absolute;margin-left:-20px;left:50%;-webkit-animation-name:rotateThis;-webkit-animation-duration:1s;-webkit-animation-iteration-count:infinite;-webkit-animation-timing-function:linear}@-webkit-keyframes rotateThis{from{-webkit-transform:rotate(0deg)}to{-webkit-transform:rotate(360deg)}}
     </style>
     <link id="touch-icon" rel="apple-touch-icon-precomposed" />
     <link rel="stylesheet" href="css/linkedinshuttle.css" type="text/css" media="screen" />
@@ -29,12 +29,12 @@
     
     <h1>LinkedIn Shuttle Tracker</h1>
     <div id="map_canvas"></div>
-    <!--<nav>
+    <nav>
       <ul>
-        <li><a id="shuttleloc" href="#">Shuttle Location</a></li>
-        <li><a id="myloc" href="#">My Location</a></li>
+        <li><a id="shuttleLoc" href="#">Shuttle Location</a></li>
+        <li><a id="youLoc" href="#">Your Location</a></li>
       </ul>
-    </nav>-->
+    </nav>
     <div id="container" class="speed-data">
     </div>
     <select id="stopChooser">

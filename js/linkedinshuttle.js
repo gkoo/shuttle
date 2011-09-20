@@ -165,12 +165,13 @@ $(function() {
   },
 
   drawMap = function(latitude, longitude) {
-    var map = new google.maps.Map(document.getElementById("map_canvas"),{
-          zoom: 13,
-          center: new google.maps.LatLng(latitude, longitude),
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        }),
-        browserSupportFlag = false;
+    var browserSupportFlag = false;
+    
+    map = new google.maps.Map(document.getElementById("map_canvas"),{
+      zoom: 13,
+      center: new google.maps.LatLng(latitude, longitude),
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    }); 
 
     if (navigator.geolocation) {
       browserSupportFlag = true;
@@ -223,34 +224,10 @@ $(function() {
     }
 
     container.append(newDataList);
-
-    /*$("#shuttleloc").click(function(e) {
-      e.preventDefault();
-
-      $.ajax('http://64.87.15.235/networkfleetcar/getfleetgpsinfoextended?u=linked-in&p=linkedin', {
-        crossDomain: true,
-        dataType: 'jsonp',
-        success: function(data, textStatus) {
-          var obj, attr, latitude, longitude, i, len, field, url;
-          if (!data || !data.features || !data.features.length) {
-            return;
-          }
-          attr = data.features[0].attributes;
-          if (!attr) return;
-          map.setCenter(new google.maps.LatLng(attr.Latitude, attr.Longitude));
-        }
-      });
-    });
-
-    $("#myloc").click(function(e) {
-      e.preventDefault();
-      navigator.geolocation.getCurrentPosition(function(position) {
-        map.setCenter(position.coords.latitude, position.coords.longitude);
-      });
-    })*/
-
-    $("#touch-init").remove();
-    $("html").removeClass("initial-bootstrapping");
+  },
+  
+  centerMap = function(lat, long) {
+    map.setCenter(new google.maps.LatLng(lat, long));
   },
 
   addStops = function() {
@@ -275,10 +252,53 @@ $(function() {
           idx     = parseInt(val, 10),
           stop    = stops[idx],
           latlng  = [stop.location.latitude, stop.location.longitude].join(',');
+          
+      centerMap(stop.location.latitude, stop.location.longitude);
+      
       $.ajax(distanceProxyUrl + encodeURIComponent(currLatLng) + '/' + encodeURIComponent(latlng), {
         dataType: 'jsonp',
         success: handleDistanceData
       });
+    });
+  },
+  
+  setupYouToggle = function() {
+    var youLink = $("#youLoc");
+    
+    youLink.click(function() {
+      centerMap(youmarker.position.lat(), youmarker.position.lng());
+    });
+  },
+  
+  setupShuttleToggle = function() {
+    var shuttleLink = $("#shuttleLoc");
+    
+    shuttleLink.click(function() {
+      centerMap(busmarker.position.lat(), busmarker.position.lng());
+    });
+  },
+  
+  setupPolling = function() {
+    //Data actually does not refresh any faster than 1 minute intervals
+    setTimeout(function() {
+      executePoll();
+    },60000);
+  },
+  
+  executePoll = function() {
+    //Update shuttle loc
+    $.ajax('http://64.87.15.235/networkfleetcar/getfleetgpsinfoextended?u=linked-in&p=linkedin', {
+      crossDomain: true,
+      dataType: 'jsonp',
+      success: function(data, textStatus) {
+        var attr;
+        if (!data || !data.features || !data.features.length) {
+          return;
+        }
+        attr = data.features[0].attributes;
+        busmarker.setPosition(new google.maps.LatLng(attr.Latitude, attr.Longitude));
+        setupPolling();
+      }
     });
   },
 
@@ -294,10 +314,15 @@ $(function() {
         attr = data.features[0].attributes;
         if (!attr) { return; }
         handleTrackingData(attr);
+        $("#touch-init").remove();
+        $("html").removeClass("initial-bootstrapping");
       }
     });
 
     setupStopChooser();
+    setupYouToggle();
+    setupShuttleToggle();
+    setupPolling();
   };
 
   init();
