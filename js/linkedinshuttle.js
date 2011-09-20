@@ -336,6 +336,9 @@ $(function() {
         handleTrackingData(attr);
         $("#touch-init").remove();
         $("html").removeClass("initial-bootstrapping");
+        setTimeout(function() {
+          window.scrollTo(0,0);
+        },0);
       }
     });
 
@@ -344,5 +347,4 @@ $(function() {
   };
 
   init();
-
 });
