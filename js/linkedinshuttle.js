@@ -2,9 +2,11 @@ $(function() {
   var container         = $('#container'),
       distanceListElem  = $('#distanceData'),
       distanceProxyUrl  = 'http://koo.no.de/distanceproxy/',
+      closestStopUrl    = 'http://koo.no.de/closestdistance/',
+      networkFleetUrl   = 'http://64.87.15.235/networkfleetcar/getfleetgpsinfoextended?u=linked-in&p=linkedin',
       li_latlng         = '37.423327,-122.071152',
       map,
-      currLatLng,
+      shuttleLatLng,
       busmarker, youmarker,
       stops = [
         {
@@ -166,7 +168,7 @@ $(function() {
 
   drawMap = function(latitude, longitude) {
     var browserSupportFlag = false;
-    
+
     map = new google.maps.Map(document.getElementById("map_canvas"),{
       zoom: 13,
       center: new google.maps.LatLng(latitude, longitude),
@@ -210,7 +212,8 @@ $(function() {
                              'Zip'],
         i, len, fieldName, fieldValue, newDataItem;
 
-    currLatLng = attr.Latitude + ',' + attr.Longitude;
+    shuttleLatLng = attr.Latitude + ',' + attr.Longitude;
+    setupStopChooser();
 
     drawMap(attr.Latitude, attr.Longitude);
 
@@ -225,7 +228,7 @@ $(function() {
 
     container.append(newDataList);
   },
-  
+
   centerMap = function(lat, long) {
     map.setCenter(new google.maps.LatLng(lat, long));
   },
@@ -244,6 +247,22 @@ $(function() {
     }
   },
 
+  getClosestStopToYou = function(callback) {
+    // returns closest stop (index in the stops array)
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        $.ajax(closestStopUrl + [position.coords.latitude, position.coords.longitude].join(','), {
+          dataType: 'jsonp',
+          success: function(idx) {
+            callback(idx);
+          }
+        });
+      });
+    } else {
+      callback(stops.length-1); // default to linkedin campus
+    }
+  },
+
   setupStopChooser = function() {
     var stopChooser = $('#stopChooser');
 
@@ -252,42 +271,43 @@ $(function() {
           idx     = parseInt(val, 10),
           stop    = stops[idx],
           latlng  = [stop.location.latitude, stop.location.longitude].join(',');
-          
-      centerMap(stop.location.latitude, stop.location.longitude);
-      
-      $.ajax(distanceProxyUrl + encodeURIComponent(currLatLng) + '/' + encodeURIComponent(latlng), {
+
+      $.ajax(distanceProxyUrl + encodeURIComponent(shuttleLatLng) + '/' + encodeURIComponent(latlng), {
         dataType: 'jsonp',
         success: handleDistanceData
       });
     });
-  },
-  
-  setupYouToggle = function() {
-    var youLink = $("#youLoc");
-    
-    youLink.click(function() {
-      centerMap(youmarker.position.lat(), youmarker.position.lng());
+
+    getClosestStopToYou(function(idx) {
+      stopChooser.val(idx);
+      stopChooser.trigger('change');
     });
   },
-  
-  setupShuttleToggle = function() {
-    var shuttleLink = $("#shuttleLoc");
-    
-    shuttleLink.click(function() {
-      centerMap(busmarker.position.lat(), busmarker.position.lng());
+
+  setupActions = function() {
+    // Setup jump links
+    $("#youLoc").click(function() {
+      if (youmarker) {
+        centerMap(youmarker.position.lat(), youmarker.position.lng());
+      }
+    });
+    $("#shuttleLoc").click(function() {
+      if (busmarker) {
+        centerMap(busmarker.position.lat(), busmarker.position.lng());
+      }
     });
   },
-  
+
   setupPolling = function() {
     //Data actually does not refresh any faster than 1 minute intervals
     setTimeout(function() {
       executePoll();
     },60000);
   },
-  
+
   executePoll = function() {
     //Update shuttle loc
-    $.ajax('http://64.87.15.235/networkfleetcar/getfleetgpsinfoextended?u=linked-in&p=linkedin', {
+    $.ajax(networkFleetUrl, {
       crossDomain: true,
       dataType: 'jsonp',
       success: function(data, textStatus) {
@@ -303,7 +323,7 @@ $(function() {
   },
 
   init = function() {
-    $.ajax('http://64.87.15.235/networkfleetcar/getfleetgpsinfoextended?u=linked-in&p=linkedin', {
+    $.ajax(networkFleetUrl, {
       crossDomain: true,
       dataType: 'jsonp',
       success: function(data, textStatus) {
@@ -319,9 +339,7 @@ $(function() {
       }
     });
 
-    setupStopChooser();
-    setupYouToggle();
-    setupShuttleToggle();
+    setupActions();
     setupPolling();
   };
 
