@@ -1,9 +1,10 @@
-#map_canvas {
-  width: 100%;
-  height: 200px;
+html, body  {
+  padding: 0;
+  margin: 0;
+  height: 100%;
 }
 
-html { 
+body {
   font-family: 'Myriad Pro', Helvetica, sans-serif;
   font-size: 12px;
 }
@@ -28,3 +29,38 @@ ul li {
 select {
   clear: left;
 }
+
+#map_canvas {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+/* Links */
+a, a:visited, a:focus, a:hover, a:active {
+  color: #1C6BA1;
+}
+
+/* Header */
+header {
+  position: absolute;
+  top: 0;
+  height: 45px;
+  width: 100%;
+  background-color: #FFF;
+  z-index: 1;
+  opacity: 0.8;
+}
+
+/* Navigation */
+nav {
+  position: absolute;
+  bottom: 0;
+  height: 45px;
+  width: 100%;
+  background-color: #FFF;
+  z-index: 1;
+  opacity: 0.8;
+}
+
