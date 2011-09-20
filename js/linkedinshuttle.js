@@ -1,9 +1,10 @@
 $(function() {
   var container         = $('#container'),
       distanceListElem  = $('#distanceData'),
-      closestListElem   = $('#closestData'),
+      distanceProxyUrl  = 'http://koo.no.de/distanceproxy/',
       li_latlng         = '37.423327,-122.071152',
       map,
+      currLatLng,
       busmarker, youmarker,
       stops = [
         {
@@ -115,18 +116,6 @@ $(function() {
           }
         },
         {
-          name: "LinkedIn Campus",
-          description: "In front of 2027 Stierlin",
-          pickupTime: {
-            hours: 7,
-            minutes: 20
-          },
-          location: {
-            latitude: 37.423301,
-            longitude: -122.071956
-          }
-        },
-        {
           name: "LinkedIn Sales Development",
           description: "Front of 2037 Landings",
           pickupTime: {
@@ -136,6 +125,18 @@ $(function() {
           location: {
             latitude: 37.419782,
             longitude: -122.088554
+          }
+        },
+        {
+          name: "LinkedIn Campus",
+          description: "In front of 2027 Stierlin",
+          pickupTime: {
+            hours: 7,
+            minutes: 20
+          },
+          location: {
+            latitude: 37.423301,
+            longitude: -122.071956
           }
         }
       ],
@@ -154,6 +155,7 @@ $(function() {
     var distanceData = extractDistanceData(data);
     if (!distanceData) { return; }
 
+    distanceListElem.empty();
     if (distanceData.distance && distanceData.distance.text) {
       distanceListElem.append($('<li>').html('<strong>Distance from LinkedIn:</strong> ' + distanceData.distance.text));
     }
@@ -162,39 +164,14 @@ $(function() {
     }
   },
 
-  handleClosestStop = function(data) {
-    var distanceData = extractDistanceData(data);
-    if (!distanceData) { return; }
-
-    if (data.name) {
-      closestListElem.append($('<li>').html('<strong>Closest stop to the shuttle:</strong> ' + data.name));
-    }
-    if (distanceData.distance && distanceData.distance.text) {
-      closestListElem.append($('<li>').html('<strong>Distance:</strong> ' + distanceData.distance.text));
-    }
-    if (distanceData.duration && distanceData.duration.text) {
-      closestListElem.append($('<li>').html('<strong>Time to reach:</strong> ' + distanceData.duration.text));
-    }
-  },
-
-  handleTrackingData = function(attr) {
-    // create map
-    var latitude          = attr.Latitude,
-        longitude         = attr.Longitude,
-        latlng            = latitude+','+longitude,
-        // Have to proxy Google Distance Matrix API since it doesn't support JSONP
-        distanceProxyUrl  = 'http://koo.no.de/distanceproxy/' + encodeURIComponent(latlng) + '/' + encodeURIComponent(li_latlng),
-        closestUrl        = 'http://koo.no.de/closestdistance/' + encodeURIComponent(latlng),
-        newDataList       = $('<ul>'),
-        relevantFields    = ['MaxSpeed',
-                             'AvgSpeed',
-                             'InstSpeed',
-                             'StreetName',
-                             'City',
-                             'Zip'],
-        i, len, fieldName, fieldValue, newDataItem, initialLocation, 
+  drawMap = function(latitude, longitude) {
+    var map = new google.maps.Map(document.getElementById("map_canvas"),{
+          zoom: 13,
+          center: new google.maps.LatLng(latitude, longitude),
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        }),
         browserSupportFlag = false;
-    
+
     if (navigator.geolocation) {
       browserSupportFlag = true;
       navigator.geolocation.getCurrentPosition(function(position) {
@@ -210,24 +187,6 @@ $(function() {
       browserSupportFlag = false;
     }
 
-    $.ajax(distanceProxyUrl, {
-      crossDomain: true,
-      dataType: 'jsonp',
-      success: handleDistanceData
-    });
-
-    $.ajax(closestUrl, {
-      crossDomain: true,
-      dataType: 'jsonp',
-      success: handleClosestStop
-    });
-    
-    map = new google.maps.Map(document.getElementById("map_canvas"),{
-      zoom: 13,
-      center: new google.maps.LatLng(latitude, longitude),
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    });
-    
     busmarker = new google.maps.Marker({
       position: new google.maps.LatLng(latitude, longitude),
       map: map,
@@ -235,6 +194,24 @@ $(function() {
       title: "Shuttle Current Location",
       animation: google.maps.Animation.DROP
     });
+
+    addStops();
+  },
+
+  handleTrackingData = function(attr) {
+    // Have to proxy Google Distance Matrix API since it doesn't support JSONP
+    var newDataList       = $('<ul>'),
+        relevantFields    = ['MaxSpeed',
+                             'AvgSpeed',
+                             'InstSpeed',
+                             'StreetName',
+                             'City',
+                             'Zip'],
+        i, len, fieldName, fieldValue, newDataItem;
+
+    currLatLng = attr.Latitude + ',' + attr.Longitude;
+
+    drawMap(attr.Latitude, attr.Longitude);
 
     for (i=0,len=relevantFields.length; i<len; ++i) {
       fieldName = relevantFields[i];
@@ -245,13 +222,11 @@ $(function() {
       }
     }
 
-    addStops();
-    
     container.append(newDataList);
-    
+
     /*$("#shuttleloc").click(function(e) {
       e.preventDefault();
-      
+
       $.ajax('http://64.87.15.235/networkfleetcar/getfleetgpsinfoextended?u=linked-in&p=linkedin', {
         crossDomain: true,
         dataType: 'jsonp',
@@ -266,7 +241,7 @@ $(function() {
         }
       });
     });
-    
+
     $("#myloc").click(function(e) {
       e.preventDefault();
       navigator.geolocation.getCurrentPosition(function(position) {
@@ -290,19 +265,41 @@ $(function() {
         });
       }
     }
+  },
+
+  setupStopChooser = function() {
+    var stopChooser = $('#stopChooser');
+
+    stopChooser.change(function() {
+      var val     = stopChooser.val(),
+          idx     = parseInt(val, 10),
+          stop    = stops[idx],
+          latlng  = [stop.location.latitude, stop.location.longitude].join(',');
+      $.ajax(distanceProxyUrl + encodeURIComponent(currLatLng) + '/' + encodeURIComponent(latlng), {
+        dataType: 'jsonp',
+        success: handleDistanceData
+      });
+    });
+  },
+
+  init = function() {
+    $.ajax('http://64.87.15.235/networkfleetcar/getfleetgpsinfoextended?u=linked-in&p=linkedin', {
+      crossDomain: true,
+      dataType: 'jsonp',
+      success: function(data, textStatus) {
+        var obj, attr, latitude, longitude, i, len, field, url;
+        if (!data || !data.features || !data.features.length) {
+          return;
+        }
+        attr = data.features[0].attributes;
+        if (!attr) { return; }
+        handleTrackingData(attr);
+      }
+    });
+
+    setupStopChooser();
   };
 
-  $.ajax('http://64.87.15.235/networkfleetcar/getfleetgpsinfoextended?u=linked-in&p=linkedin', {
-    crossDomain: true,
-    dataType: 'jsonp',
-    success: function(data, textStatus) {
-      var obj, attr, latitude, longitude, i, len, field, url;
-      if (!data || !data.features || !data.features.length) {
-        return;
-      }
-      attr = data.features[0].attributes;
-      if (!attr) return;
-      handleTrackingData(attr);
-    }
-  });
+  init();
+
 });

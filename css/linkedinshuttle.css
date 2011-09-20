@@ -24,3 +24,7 @@ ul li {
   list-style: none;
   padding: 5px;
 }
+
+select {
+  clear: left;
+}
