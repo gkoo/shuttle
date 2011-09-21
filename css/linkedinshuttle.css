@@ -26,7 +26,7 @@ html, body  {
 
 body {
   font-family: 'TenacityRegular', 'Myriad Pro', Helvetica, sans-serif;
-  font-size: 12px;
+  font-size: 15px;
 }
 
 h1 {
@@ -40,7 +40,7 @@ ul {
   padding: 0;
 }
 
-ul li {
+ul li.shuttleInfo {
   list-style: none;
   padding: 5px;
 }
@@ -125,6 +125,7 @@ nav img {
 
 #info {
   background-color: #fff;
+  padding: 3px;
   
   -webkit-box-shadow: inset 1px 1px 5px #000;
   box-shadow: inset 1px 1px 5px #000;

@@ -6,6 +6,7 @@ $(function() {
       li_latlng         = '37.423327,-122.071152',
       map,
       shuttleLatLng,
+      browserSupportFlag = false,
       busmarker, youmarker,
       stops = [
         {
@@ -177,28 +178,11 @@ $(function() {
   },
 
   drawMap = function(latitude, longitude) {
-    var browserSupportFlag = false;
-
     map = new google.maps.Map(document.getElementById("map_canvas"),{
       zoom: 13,
       center: new google.maps.LatLng(latitude, longitude),
       mapTypeId: google.maps.MapTypeId.ROADMAP
     });
-
-    if (navigator.geolocation) {
-      browserSupportFlag = true;
-      navigator.geolocation.getCurrentPosition(function(position) {
-        youmarker = new google.maps.Marker({
-          position: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
-          map: map,
-          icon: new google.maps.MarkerImage("img/youicon.png"),
-          title: "You're here!",
-          animation: google.maps.Animation.BOUNCE
-        });
-      });
-    } else {
-      browserSupportFlag = false;
-    }
 
     busmarker = new google.maps.Marker({
       position: new google.maps.LatLng(latitude, longitude),
@@ -209,6 +193,7 @@ $(function() {
     });
 
     addStops();
+    addYou();
   },
 
   handleTrackingData = function(attr) {
@@ -241,6 +226,23 @@ $(function() {
           title: currStop.name
         });
       }
+    }
+  },
+  
+  addYou = function() {
+    if (navigator.geolocation) {
+      browserSupportFlag = true;
+      navigator.geolocation.getCurrentPosition(function(position) {
+        youmarker = new google.maps.Marker({
+          position: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
+          map: map,
+          icon: new google.maps.MarkerImage("img/youicon.png"),
+          title: "You're here!",
+          animation: google.maps.Animation.BOUNCE
+        });
+      });
+    } else {
+      browserSupportFlag = false;
     }
   },
 
