@@ -191,7 +191,7 @@ $(function() {
         youmarker = new google.maps.Marker({
           position: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
           map: map,
-          icon: new google.maps.MarkerImage("img/you.png"),
+          icon: new google.maps.MarkerImage("img/youicon.png"),
           title: "You're here!",
           animation: google.maps.Animation.BOUNCE
         });
@@ -203,7 +203,7 @@ $(function() {
     busmarker = new google.maps.Marker({
       position: new google.maps.LatLng(latitude, longitude),
       map: map,
-      icon: new google.maps.MarkerImage("img/bus.png"),
+      icon: new google.maps.MarkerImage("img/busicon.png"),
       title: "Shuttle Current Location",
       animation: google.maps.Animation.DROP
     });
@@ -236,6 +236,7 @@ $(function() {
       if (currStop) {
         new google.maps.Marker({
           position: new google.maps.LatLng(currStop.location.latitude, currStop.location.longitude),
+          icon: new google.maps.MarkerImage("img/otherstopicon.png"),
           map: map,
           title: currStop.name
         });
