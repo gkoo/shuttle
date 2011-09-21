@@ -22,24 +22,29 @@
   <body>
     
     <header>
-      <div id="container" class="speed-data">
+      <div id="infoContainer" class="speed-data">
+        <div id="info">
+          <ul>
+            <li class="speed shuttleInfo first">MPH</span>
+            <li class="dist shuttleInfo">MI</span>
+            <li class="eta shuttleInfo">MIN</span>
+          </div>
+          <select id="stopChooser">
+            <option value="-1">Choose a stop...</option>
+            <option value="0">Lombard &amp; Fillmore</option>
+            <option value="1">Union &amp; Van Ness</option>
+            <option value="2">Sacramento &amp; Van Ness</option>
+            <option value="3">Divisadero &amp; Grove</option>
+            <option value="4">Castro &amp; Market</option>
+            <option value="5">24th St &amp; Noe</option>
+            <option value="6">24th St &amp; Mission</option>
+            <option value="7">Cesar Chavez &amp; Folsom</option>
+            <option value="8">Millbrae</option>
+            <option value="9">LinkedIn Sales Development</option>
+            <option value="10">LinkedIn Campus</option>
+          </select>
+        </div>
       </div>
-      <select id="stopChooser">
-        <option value="-1">Choose a stop...</option>
-        <option value="0">Lombard &amp; Fillmore</option>
-        <option value="1">Union &amp; Van Ness</option>
-        <option value="2">Sacramento &amp; Van Ness</option>
-        <option value="3">Divisadero &amp; Grove</option>
-        <option value="4">Castro &amp; Market</option>
-        <option value="5">24th St &amp; Noe</option>
-        <option value="6">24th St &amp; Mission</option>
-        <option value="7">Cesar Chavez &amp; Folsom</option>
-        <option value="8">Millbrae</option>
-        <option value="9">LinkedIn Sales Development</option>
-        <option value="10">LinkedIn Campus</option>
-      </select>
-      <ul id="distanceData" class="distance-data">
-      </ul>
     </header>
     
     <div id="touch-init">

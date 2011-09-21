@@ -1,6 +1,5 @@
 $(function() {
-  var container         = $('#container'),
-      distanceListElem  = $('#distanceData'),
+  var infoElem          = $('#info'),
       distanceProxyUrl  = 'http://koo.no.de/distanceproxy/',
       closestStopUrl    = 'http://koo.no.de/closestdistance/',
       networkFleetUrl   = 'http://64.87.15.235/networkfleetcar/getfleetgpsinfoextended?u=linked-in&p=linkedin',
@@ -154,15 +153,26 @@ $(function() {
 
   // Display the distance data from Google Distance Matrix API.
   handleDistanceData = function(data) {
-    var distanceData = extractDistanceData(data);
+    var distanceData = extractDistanceData(JSON.parse(data)),
+        distElem     = infoElem.find('.dist .value'),
+        etaElem      = infoElem.find('.eta .value');
     if (!distanceData) { return; }
+    if (!distElem.length) {
+      distElem = $('<span>').addClass('value');
+      infoElem.find('.dist').prepend(distElem);
+    }
+    if (!etaElem.length) {
+      etaElem = $('<span>').addClass('value');
+      infoElem.find('.eta').prepend(etaElem);
+    }
 
-    distanceListElem.empty();
     if (distanceData.distance && distanceData.distance.text) {
-      distanceListElem.append($('<li>').html('<strong>Distance from LinkedIn:</strong> ' + distanceData.distance.text));
+      distElem.text(parseFloat(distanceData.distance.text));
+      infoElem.find('.dist').css('display', 'inline');
     }
     if (distanceData.duration && distanceData.duration.text) {
-      distanceListElem.append($('<li>').html('<strong>Time to reach LinkedIn:</strong> ' + distanceData.duration.text));
+      etaElem.text(parseInt(distanceData.duration.text));
+      infoElem.find('.eta').css('display', 'inline');
     }
   },
 
@@ -173,7 +183,7 @@ $(function() {
       zoom: 13,
       center: new google.maps.LatLng(latitude, longitude),
       mapTypeId: google.maps.MapTypeId.ROADMAP
-    }); 
+    });
 
     if (navigator.geolocation) {
       browserSupportFlag = true;
@@ -203,30 +213,16 @@ $(function() {
 
   handleTrackingData = function(attr) {
     // Have to proxy Google Distance Matrix API since it doesn't support JSONP
-    var newDataList       = $('<ul>'),
-        relevantFields    = ['MaxSpeed',
-                             'AvgSpeed',
-                             'InstSpeed',
-                             'StreetName',
-                             'City',
-                             'Zip'],
-        i, len, fieldName, fieldValue, newDataItem;
+    var i, len;
 
     shuttleLatLng = attr.Latitude + ',' + attr.Longitude;
     setupStopChooser();
 
     drawMap(attr.Latitude, attr.Longitude);
 
-    for (i=0,len=relevantFields.length; i<len; ++i) {
-      fieldName = relevantFields[i];
-      if (fieldName) {
-        fieldValue = attr[fieldName];
-        newDataItem = $('<li>').html('<strong>' + fieldName + ':</strong> ' + fieldValue);
-        newDataList.append(newDataItem);
-      }
-    }
-
-    container.append(newDataList);
+    infoElem.find('.speed').prepend($('<span>').text(attr.AvgSpeed)
+                                               .addClass('value'))
+                           .css('display', 'inline');
   },
 
   centerMap = function(lat, long) {

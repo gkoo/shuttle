@@ -21,7 +21,7 @@ ul {
 }
 
 ul li {
-  float: left;
+  display: inline;
   list-style: none;
   padding: 5px;
 }
@@ -42,25 +42,50 @@ a, a:visited, a:focus, a:hover, a:active {
   color: #1C6BA1;
 }
 
+/* Header and Nav */
+header, nav {
+  background: #000 url(../img/texture.png);
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+}
+
 /* Header */
 header {
-  position: absolute;
+  text-align: center;
   top: 0;
-  height: 45px;
-  width: 100%;
-  background-color: #FFF;
   z-index: 1;
-  opacity: 0.8;
 }
 
 /* Navigation */
 nav {
   position: absolute;
   bottom: 0;
-  height: 45px;
-  width: 100%;
-  background-color: #FFF;
-  z-index: 1;
-  opacity: 0.8;
 }
 
+#infoContainer {
+  border: 2px solid #515151;
+  margin: 0 auto;
+  padding: 2px;
+  width: 580px;
+
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+}
+
+#info {
+  background-color: #fff;
+
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+}
+
+.shuttleInfo {
+  display: none;
+}
+
+.shuttleInfo .value {
+  font-weight: bold;
+}
