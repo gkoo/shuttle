@@ -175,6 +175,8 @@ $(function() {
       etaElem.text(parseInt(distanceData.duration.text));
       infoElem.find('.eta').css('display', 'inline');
     }
+    infoElem.children('.thinking').hide();
+    infoElem.children('ul').show();
   },
 
   drawMap = function(latitude, longitude) {
@@ -277,6 +279,8 @@ $(function() {
         dataType: 'jsonp',
         success: handleDistanceData
       });
+      infoElem.children('ul').hide();
+      infoElem.children('.thinking').show();
     });
 
     getClosestStopToYou(function(idx) {
@@ -317,6 +321,7 @@ $(function() {
           return;
         }
         attr = data.features[0].attributes;
+        shuttleLatLng = attr.Latitude + ',' + attr.Longitude;
         busmarker.setPosition(new google.maps.LatLng(attr.Latitude, attr.Longitude));
         setupPolling();
       }

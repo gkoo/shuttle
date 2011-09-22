@@ -147,3 +147,12 @@ nav img {
 .refreshBtn {
   float: right;
 }
+
+.thinking {
+  display: none;
+}
+
+.spacer {
+  border-right: none;
+  height: 47px;
+}
