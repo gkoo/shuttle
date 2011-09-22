@@ -1,6 +1,7 @@
 $(function() {
   var infoElem          = $('#info'),
       distanceProxyUrl  = 'http://koo.no.de/distanceproxy/',
+      rawDistanceProxyUrl  = 'http://koo.no.de/rawdistanceproxy/',
       closestStopUrl    = 'http://koo.no.de/closestdistance/',
       networkFleetUrl   = 'http://64.87.15.235/networkfleetcar/getfleetgpsinfoextended?u=linked-in&p=linkedin',
       li_latlng         = '37.423327,-122.071152',
@@ -157,7 +158,8 @@ $(function() {
   handleDistanceData = function(data) {
     var distanceData = extractDistanceData(data),
         distElem     = infoElem.find('.dist .value'),
-        etaElem      = infoElem.find('.eta .value');
+        etaElem      = infoElem.find('.eta .value'),
+        date         = new Date();
     if (!distanceData) { return; }
     if (!distElem.length) {
       distElem = $('<span>').addClass('value');
@@ -172,7 +174,13 @@ $(function() {
       distElem.text(parseFloat(distanceData.distance.text));
       infoElem.find('.dist').css('display', 'inline');
     }
-    if (data.customEta) {
+    if (date.getHours() > 12 && date.getHours() < 17 && distanceData.distance && distanceData.duration.text) {
+      // don't factor in intermediary stop time estimates
+      etaElem.text(parseInt(distanceData.duration.text, 10));
+      infoElem.find('.eta').css('display', 'inline');
+    }
+    if ((date.getHours() < 12 || date.getHours() > 17) && data.customEta) {
+      // use custom eta time
       etaElem.text(data.customEta);
       infoElem.find('.eta').css('display', 'inline');
     }
@@ -272,14 +280,23 @@ $(function() {
 
     stopChooser.change(function() {
       var val     = stopChooser.val(),
-          idx     = parseInt(val, 10);
-          //stop    = stops[idx];
-          //latlng  = [stop.location.latitude, stop.location.longitude].join(',');
+          idx     = parseInt(val, 10),
+          stop    = stops[idx],
+          latlng  = [stop.location.latitude, stop.location.longitude].join(','),
+          date    = new Date();
 
-      $.ajax(distanceProxyUrl + encodeURIComponent(shuttleLatLng) + '/' + idx + '/' + isSouthbound, {
-        dataType: 'jsonp',
-        success: handleDistanceData
-      });
+      if (date.getHours() > 12 && date.getHours() < 17) {
+        $.ajax(rawDistanceProxyUrl + encodeURIComponent(shuttleLatLng) + '/' + latlng, {
+          dataType: 'jsonp',
+          success: handleDistanceData
+        });
+      }
+      else {
+        $.ajax(distanceProxyUrl + encodeURIComponent(shuttleLatLng) + '/' + idx + '/' + isSouthbound, {
+          dataType: 'jsonp',
+          success: handleDistanceData
+        });
+      }
       infoElem.children('ul').hide();
       infoElem.children('.thinking').show();
     });
