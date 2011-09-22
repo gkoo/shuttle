@@ -4,7 +4,7 @@ $(function() {
       closestStopUrl    = 'http://koo.no.de/closestdistance/',
       networkFleetUrl   = 'http://64.87.15.235/networkfleetcar/getfleetgpsinfoextended?u=linked-in&p=linkedin',
       li_latlng         = '37.423327,-122.071152',
-      isAM              = (new Date()).getHours() < 12 ? 1 : 0,
+      isSouthbound,
       map,
       shuttleLatLng,
       browserSupportFlag = false,
@@ -276,7 +276,7 @@ $(function() {
           //stop    = stops[idx];
           //latlng  = [stop.location.latitude, stop.location.longitude].join(',');
 
-      $.ajax(distanceProxyUrl + encodeURIComponent(shuttleLatLng) + '/' + idx + '/' + isAM, {
+      $.ajax(distanceProxyUrl + encodeURIComponent(shuttleLatLng) + '/' + idx + '/' + isSouthbound, {
         dataType: 'jsonp',
         success: handleDistanceData
       });
@@ -330,7 +330,22 @@ $(function() {
     });
   },
 
+  detectDirection = function() {
+    var date = new Date(),
+        hour = date.getHours(),
+        minute = date.getMinutes();
+    if (date.getDay() !== '5') {
+      // Monday - Thurs -- assume southbound until 6pm (allow 15 minute buffer)
+      isSouthbound = hour < 18 ? 1 : 0;
+    }
+    else {
+      // Friday -- assume southbound until 5:15pm
+      isSouthbound = hour < 17 || (hour === 17 && minute <= 15) ? 1 : 0;
+    }
+  },
+
   init = function() {
+    detectDirection();
     $.ajax(networkFleetUrl, {
       crossDomain: true,
       dataType: 'jsonp',
