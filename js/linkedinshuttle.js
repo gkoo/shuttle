@@ -4,6 +4,7 @@ $(function() {
       closestStopUrl    = 'http://koo.no.de/closestdistance/',
       networkFleetUrl   = 'http://64.87.15.235/networkfleetcar/getfleetgpsinfoextended?u=linked-in&p=linkedin',
       li_latlng         = '37.423327,-122.071152',
+      isAM              = (new Date()).getHours() < 12 ? 1 : 0,
       map,
       shuttleLatLng,
       browserSupportFlag = false,
@@ -154,7 +155,7 @@ $(function() {
 
   // Display the distance data from Google Distance Matrix API.
   handleDistanceData = function(data) {
-    var distanceData = extractDistanceData(JSON.parse(data)),
+    var distanceData = extractDistanceData(data),
         distElem     = infoElem.find('.dist .value'),
         etaElem      = infoElem.find('.eta .value');
     if (!distanceData) { return; }
@@ -171,8 +172,8 @@ $(function() {
       distElem.text(parseFloat(distanceData.distance.text));
       infoElem.find('.dist').css('display', 'inline');
     }
-    if (distanceData.duration && distanceData.duration.text) {
-      etaElem.text(parseInt(distanceData.duration.text));
+    if (data.customEta) {
+      etaElem.text(data.customEta);
       infoElem.find('.eta').css('display', 'inline');
     }
     infoElem.children('.thinking').hide();
@@ -232,7 +233,7 @@ $(function() {
       }
     }
   },
-  
+
   addYou = function() {
     if (navigator.geolocation) {
       browserSupportFlag = true;
@@ -256,8 +257,8 @@ $(function() {
       navigator.geolocation.getCurrentPosition(function(position) {
         $.ajax(closestStopUrl + [position.coords.latitude, position.coords.longitude].join(','), {
           dataType: 'jsonp',
-          success: function(idx) {
-            callback(idx);
+          success: function(data) {
+            callback(data);
           }
         });
       });
@@ -271,11 +272,11 @@ $(function() {
 
     stopChooser.change(function() {
       var val     = stopChooser.val(),
-          idx     = parseInt(val, 10),
-          stop    = stops[idx],
-          latlng  = [stop.location.latitude, stop.location.longitude].join(',');
+          idx     = parseInt(val, 10);
+          //stop    = stops[idx];
+          //latlng  = [stop.location.latitude, stop.location.longitude].join(',');
 
-      $.ajax(distanceProxyUrl + encodeURIComponent(shuttleLatLng) + '/' + encodeURIComponent(latlng), {
+      $.ajax(distanceProxyUrl + encodeURIComponent(shuttleLatLng) + '/' + idx + '/' + isAM, {
         dataType: 'jsonp',
         success: handleDistanceData
       });
@@ -283,8 +284,8 @@ $(function() {
       infoElem.children('.thinking').show();
     });
 
-    getClosestStopToYou(function(idx) {
-      stopChooser.val(idx);
+    getClosestStopToYou(function(data) {
+      stopChooser.val(data.idx);
       stopChooser.trigger('change');
     });
   },
@@ -323,6 +324,7 @@ $(function() {
         attr = data.features[0].attributes;
         shuttleLatLng = attr.Latitude + ',' + attr.Longitude;
         busmarker.setPosition(new google.maps.LatLng(attr.Latitude, attr.Longitude));
+        centerMap(attr.Latitude, attr.Longitude);
         setupPolling();
       }
     });
