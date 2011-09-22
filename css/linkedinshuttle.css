@@ -40,6 +40,10 @@ ul {
   padding: 0;
 }
 
+ul li {
+  list-style: none;
+}
+
 ul li.shuttleInfo {
   list-style: none;
   padding: 5px;
