@@ -1,7 +1,7 @@
 $(function() {
   var infoElem          = $('#info'),
       distanceProxyUrl  = 'http://koo.no.de/distanceproxy/',
-      rawDistanceProxyUrl  = 'http://koo.no.de/rawdistanceproxy/',
+      rawDistanceProxyUrl = 'http://koo.no.de/rawdistanceproxy/',
       closestStopUrl    = 'http://koo.no.de/closestdistance/',
       networkFleetUrl   = 'http://64.87.15.235/networkfleetcar/getfleetgpsinfoextended?u=linked-in&p=linkedin',
       li_latlng         = '37.423327,-122.071152',
@@ -292,6 +292,7 @@ $(function() {
         });
       }
       else {
+        // get custom ETA
         $.ajax(distanceProxyUrl + encodeURIComponent(shuttleLatLng) + '/' + idx + '/' + isSouthbound, {
           dataType: 'jsonp',
           success: handleDistanceData
@@ -341,7 +342,6 @@ $(function() {
         attr = data.features[0].attributes;
         shuttleLatLng = attr.Latitude + ',' + attr.Longitude;
         busmarker.setPosition(new google.maps.LatLng(attr.Latitude, attr.Longitude));
-        centerMap(attr.Latitude, attr.Longitude);
         setupPolling();
       }
     });
