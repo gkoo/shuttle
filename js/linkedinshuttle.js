@@ -181,7 +181,9 @@ $(function() {
     map = new google.maps.Map(document.getElementById("map_canvas"),{
       zoom: 13,
       center: new google.maps.LatLng(latitude, longitude),
-      mapTypeId: google.maps.MapTypeId.ROADMAP
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      mapTypeControl: false,
+      streetViewControl: false
     });
 
     busmarker = new google.maps.Marker({
