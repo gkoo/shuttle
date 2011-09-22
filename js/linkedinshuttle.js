@@ -250,8 +250,7 @@ $(function() {
           position: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
           map: map,
           icon: new google.maps.MarkerImage("img/youicon.png"),
-          title: "You're here!",
-          animation: google.maps.Animation.BOUNCE
+          title: "You're here!"
         });
       });
     } else {
