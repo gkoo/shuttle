@@ -158,23 +158,33 @@ $(function() {
   handleDistanceData = function(data) {
     var distanceData = extractDistanceData(data),
         distElem     = infoElem.find('.dist .value'),
-        etaElem      = infoElem.find('.eta .value'),
         date         = new Date();
     if (!distanceData) { return; }
     if (!distElem.length) {
       distElem = $('<span>').addClass('value');
       infoElem.find('.dist').prepend(distElem);
     }
-    if (!etaElem.length) {
-      etaElem = $('<span>').addClass('value');
-      infoElem.find('.eta').prepend(etaElem);
-    }
 
     if (distanceData.distance && distanceData.distance.text) {
       distElem.text(parseFloat(distanceData.distance.text));
       infoElem.find('.dist').css('display', 'inline');
     }
-    /*
+    infoElem.children('.thinking').hide();
+    infoElem.children('ul').show();
+  },
+
+  // Display the distance data from Google Distance Matrix API.
+  handleEtaData = function(data) {
+    var distanceData = extractDistanceData(data),
+        distElem     = infoElem.find('.dist .value'),
+        etaElem      = infoElem.find('.eta .value'),
+        date         = new Date();
+    if (!distanceData) { return; }
+    if (!etaElem.length) {
+      etaElem = $('<span>').addClass('value');
+      infoElem.find('.eta').prepend(etaElem);
+    }
+
     if (date.getHours() > 12 && date.getHours() < 17 && distanceData.distance && distanceData.duration.text) {
       // don't factor in intermediary stop time estimates
       etaElem.text(parseInt(distanceData.duration.text, 10));
@@ -183,11 +193,6 @@ $(function() {
     if ((date.getHours() < 12 || date.getHours() >= 17) && data.customEta) {
       // use custom eta time
       etaElem.text(data.customEta);
-      infoElem.find('.eta').css('display', 'inline');
-    }
-    */
-    if (distanceData.distance && distanceData.duration.text) {
-      etaElem.text(parseInt(distanceData.duration.text, 10));
       infoElem.find('.eta').css('display', 'inline');
     }
     infoElem.children('.thinking').hide();
@@ -290,21 +295,26 @@ $(function() {
           latlng  = [stop.location.latitude, stop.location.longitude].join(','),
           date    = new Date();
 
-      //if (date.getHours() > 12 && date.getHours() < 17) {
+      if (date.getHours() > 12 && date.getHours() < 17) {
         $.ajax(rawDistanceProxyUrl + encodeURIComponent(shuttleLatLng) + '/' + latlng, {
           dataType: 'jsonp',
-          success: handleDistanceData
+          success: function(data) {
+            handleDistanceData(data);
+            handleEtaData(data);
+          }
         });
-      /*
       }
       else {
         // get custom ETA
         $.ajax(distanceProxyUrl + encodeURIComponent(shuttleLatLng) + '/' + idx + '/' + isSouthbound, {
           dataType: 'jsonp',
+          success: handleEtaData // TODO: update the eta data only!
+        });
+        $.ajax(rawDistanceProxyUrl + encodeURIComponent(shuttleLatLng) + '/' + latlng, {
+          dataType: 'jsonp',
           success: handleDistanceData
         });
       }
-      */
       infoElem.children('ul').hide();
       infoElem.children('.thinking').show();
     });
