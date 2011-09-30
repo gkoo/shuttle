@@ -276,7 +276,8 @@ $(function() {
         $.ajax(closestStopUrl + [position.coords.latitude, position.coords.longitude].join(','), {
           dataType: 'jsonp',
           success: function(data) {
-            callback(data);
+            $('#stopChooser').val(data.idx)
+                             .trigger('change');
           }
         });
       });
@@ -320,10 +321,7 @@ $(function() {
       infoElem.children('.thinking').show();
     });
 
-    getClosestStopToYou(function(data) {
-      stopChooser.val(data.idx);
-      stopChooser.trigger('change');
-    });
+    getClosestStopToYou();
   },
 
   setupActions = function() {
@@ -333,10 +331,15 @@ $(function() {
         centerMap(youmarker.position.lat(), youmarker.position.lng());
       }
     });
+
     $("#shuttleLoc").click(function() {
       if (busmarker) {
         centerMap(busmarker.position.lat(), busmarker.position.lng());
       }
+    });
+
+    $("#refresh").click(function() {
+      $('#stopChooser').trigger('change');
     });
   },
 
