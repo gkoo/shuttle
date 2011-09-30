@@ -295,7 +295,8 @@ $(function() {
           latlng  = [stop.location.latitude, stop.location.longitude].join(','),
           date    = new Date();
 
-      if (date.getHours() > 12 && date.getHours() < 17) {
+      if ((date.getHours() > 12 && date.getHours() < 17) // Mon - Thurs, first run, between noon and 5
+          || (date.getHours() == 20 && date.getMinutes() < 45)) { // Mon - Thurs, first run, between 8 and 8:45
         $.ajax(rawDistanceProxyUrl + encodeURIComponent(shuttleLatLng) + '/' + latlng, {
           dataType: 'jsonp',
           success: function(data) {
