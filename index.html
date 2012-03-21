@@ -1,1 +1,78 @@
-My GitHub Page
+<!DOCTYPE html>
+<html class="initial-bootstrapping">
+  <head>
+    <meta charset="utf-8" />
+    
+    <title>Shuttle[in]</title>
+    <!-- Mobile viewport optimization http://goo.gl/b9SaQ -->
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320"/>
+    <meta name="viewport" content="width=device-width, target-densitydpi=160, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--Splash screen CSS -->
+    <style type="text/css">
+      html.initial-bootstrapping{background-color:#333;background-image:-webkit-gradient(radial,center 40%,10,center center,200,from(#444),to(#000));height:100%}html.initial-bootstrapping a, html.initial-bootstrapping select, html.initial-bootstrapping header, html.initial-bootstrapping footer{display:none;}#in-bug{position:absolute;-webkit-box-shadow:0 0 20px #111;-moz-box-shadow:0 0 20px #111;box-shadow:0 0 20px #111;border-radius:10px}#spinner{position:absolute;margin-left:-20px;left:50%;-webkit-animation-name:rotateThis;-webkit-animation-duration:1s;-webkit-animation-iteration-count:infinite;-webkit-animation-timing-function:linear}@-webkit-keyframes rotateThis{from{-webkit-transform:rotate(0deg)}to{-webkit-transform:rotate(360deg)}}
+    </style>
+    <link id="touch-icon" rel="apple-touch-icon-precomposed"  href="img/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="css/linkedinshuttle.css" type="text/css" media="screen" />
+    
+    <script src="http://maps.google.com/maps/api/js?sensor=true" type="text/javascript"></script>
+  </head>
+  <body>
+
+    <header>
+      <div id="infoContainer" class="speed-data">
+        <div id="info">
+          <ul>
+            <li class="speed shuttleInfo first">MPH</li>
+            <li class="dist shuttleInfo">MI</li>
+            <li class="eta shuttleInfo">MIN</li>
+          </ul>
+          <div class="thinking">...</div>
+        </div>
+        <!-- GK: commented to remove dependency on server -->
+        <!--
+        <select id="stopChooser">
+          <option value="0">Lombard &amp; Fillmore</option>
+          <option value="1">Union &amp; Van Ness</option>
+          <option value="2">Sacramento &amp; Van Ness</option>
+          <option value="3">Divisadero &amp; Grove</option>
+          <option value="4">Castro &amp; Market</option>
+          <option value="5">24th St &amp; Noe</option>
+          <option value="6">24th St &amp; Mission</option>
+          <option value="7">Cesar Chavez &amp; Folsom</option>
+          <option value="8">Millbrae</option>
+          <option value="9">LinkedIn Sales Development</option>
+          <option value="10" selected="selected">LinkedIn Campus</option>
+        </select>
+        -->
+      </div>
+    </header>
+
+    <div id="touch-init">
+      <canvas id="in-bug" width="100" height="100"></canvas>
+      <img alt="" id="in-image" style="display: none" />
+      <canvas id="spinner" width="36" height="36"></canvas>
+    </div>
+
+    <div id="map_canvas"></div>
+
+    <nav>
+      <ul>
+        <li><a id="youLoc" href="#"><img src="img/arrowbuttonicon.png" alt="Jump to your location"/></a></li>
+        <li><a id="shuttleLoc" href="#"><img src="img/busbuttonicon.png" alt="Jump to the shuttle location"/></a></li>
+        <li class="spacer"></li>
+        <li class="refreshBtn"><a id="refresh" href="#"><img src="img/refreshbuttonicon.png" alt="Refresh"/></a></li>
+      </ul>
+    </nav>
+
+
+
+    <script>(function(){function h(e,k){if(f.devicePixelRatio){var i=e.width,j=e.height,g=f.devicePixelRatio;e.width=i*g;e.height=j*g;e.style.width=i+"px";e.style.height=j+"px";k.scale(g,g)}}var f=window,d=document.getElementById("in-bug"),a=d.getContext("2d"),b=a.globalAlpha,c;h(d,a);a.save();a.beginPath();a.moveTo(99.1,91.9);a.bezierCurveTo(99.1,95.8,95.9,99.1,92,99.1);a.lineTo(8.8,99.1);a.bezierCurveTo(4.9,99.1,1.8,95.8,1.8,91.9);a.lineTo(1.8,9);a.bezierCurveTo(1.8,5,4.9,1.8,8.8,1.8);a.lineTo(92,1.8);a.bezierCurveTo(95.9, 1.8,99.1,5,99.1,9);a.lineTo(99.1,91.9);a.closePath();c=a.createLinearGradient(50.4,99.1,50.4,1.8);c.addColorStop(0.28,"rgb(0, 100, 153)");c.addColorStop(0.38,"rgb(11, 109, 160)");c.addColorStop(0.58,"rgb(42, 133, 177)");c.addColorStop(0.84,"rgb(93, 171, 206)");c.addColorStop(1,"rgb(128, 198, 225)");a.fillStyle=c;a.fill();a.beginPath();a.moveTo(99.1,91.9);a.bezierCurveTo(99.1,95.8,95.9,99.1,92,99.1);a.lineTo(8.8,99.1);a.bezierCurveTo(4.9,99.1,1.8,95.8,1.8,91.9);a.lineTo(1.8,9);a.bezierCurveTo(1.8, 5,4.9,1.8,8.8,1.8);a.lineTo(92,1.8);a.bezierCurveTo(95.9,1.8,99.1,5,99.1,9);a.lineTo(99.1,91.9);a.closePath();a.lineWidth=3.6;a.strokeStyle="rgb(31, 100, 149)";a.lineJoin="miter";a.miterLimit=4;a.stroke();a.restore();a.save();a.globalAlpha=b*0.1;a.drawImage(document.getElementById("in-image"),4.1,4.1);a.globalAlpha=b*1;a.save();a.beginPath();a.moveTo(16.2,38.2);a.lineTo(30.6,38.2);a.lineTo(30.6,84.6);a.lineTo(16.2,84.6);a.lineTo(16.2,38.2);a.closePath();a.moveTo(23.4,15.2);a.bezierCurveTo(28,15.2, 31.8,18.9,31.8,23.5);a.bezierCurveTo(31.8,28.2,28,31.9,23.4,31.9);a.bezierCurveTo(18.8,31.9,15.1,28.2,15.1,23.5);a.bezierCurveTo(15.1,18.9,18.8,15.2,23.4,15.2);a.fillStyle="rgb(255, 255, 255)";a.fill();a.beginPath();a.moveTo(39.7,38.2);a.lineTo(53.5,38.2);a.lineTo(53.5,44.6);a.lineTo(53.7,44.6);a.bezierCurveTo(55.6,40.9,60.3,37.1,67.3,37.1);a.bezierCurveTo(81.9,37.1,84.6,46.7,84.6,59.2);a.lineTo(84.6,84.6);a.lineTo(70.2,84.6);a.lineTo(70.2,62.1);a.bezierCurveTo(70.2,56.7,70.1,49.8,62.7,49.8);a.bezierCurveTo(55.2, 49.8,54.1,55.6,54.1,61.7);a.lineTo(54.1,84.6);a.lineTo(39.7,84.6);a.lineTo(39.7,38.2);a.lineTo(39.7,38.2);a.closePath();a.fill();a.restore();a.restore();a.restore();a.restore();d.style.left=f.innerWidth/2-d.style.width.replace("px","")/2+"px";a=d.style.height.replace("px","");c=f.innerHeight/2-a/2;d.style.top=c-f.innerHeight*0.1+"px";cvSpn=document.getElementById("spinner");ctSpn=cvSpn.getContext("2d");h(cvSpn,ctSpn);ctSpn.save();ctSpn.globalAlpha=b*0.33;ctSpn.beginPath();ctSpn.moveTo(18,8);ctSpn.lineTo(18, 2);ctSpn.lineWidth=4;ctSpn.strokeStyle="rgb(255, 255, 255)";ctSpn.lineCap="round";ctSpn.lineJoin="miter";ctSpn.miterLimit=4;ctSpn.stroke();ctSpn.globalAlpha=b*0.42;ctSpn.beginPath();ctSpn.moveTo(23,9.3);ctSpn.lineTo(26,4.1);ctSpn.stroke();ctSpn.globalAlpha=b*0.5;ctSpn.beginPath();ctSpn.moveTo(26.7,13);ctSpn.lineTo(31.9,10);ctSpn.stroke();ctSpn.globalAlpha=b*0.58;ctSpn.beginPath();ctSpn.moveTo(28,18);ctSpn.lineTo(34,18);ctSpn.stroke();ctSpn.globalAlpha=b*0.67;ctSpn.beginPath();ctSpn.moveTo(26.7,23); ctSpn.lineTo(31.9,26);ctSpn.stroke();ctSpn.globalAlpha=b*0.75;ctSpn.beginPath();ctSpn.moveTo(23,26.7);ctSpn.lineTo(26,31.9);ctSpn.stroke();ctSpn.globalAlpha=b*0.83;ctSpn.beginPath();ctSpn.moveTo(18,28);ctSpn.lineTo(18,34);ctSpn.stroke();ctSpn.globalAlpha=b*0.92;ctSpn.beginPath();ctSpn.moveTo(13,26.7);ctSpn.lineTo(10,31.9);ctSpn.stroke();ctSpn.globalAlpha=b*1;ctSpn.beginPath();ctSpn.moveTo(9.3,23);ctSpn.lineTo(4.1,26);ctSpn.stroke();ctSpn.globalAlpha=b*0.08;ctSpn.beginPath();ctSpn.moveTo(8,18);ctSpn.lineTo(2, 18);ctSpn.stroke();ctSpn.globalAlpha=b*0.17;ctSpn.beginPath();ctSpn.moveTo(9.3,13);ctSpn.lineTo(4.1,10);ctSpn.stroke();ctSpn.globalAlpha=b*0.25;ctSpn.beginPath();ctSpn.moveTo(13,9.3);ctSpn.lineTo(10,4.1);ctSpn.stroke();ctSpn.restore();cvSpn.style.top=c+a*1.1+"px";d=document.getElementById("touch-icon");b=["images/apple-touch-icon.png","images/apple-touch-icon_2x.png"];(a=f.devicePixelRatio)&&d.setAttribute("href",b[a-1])})();</script>
+    <script src="./js/jquery-1.6.4.min.js"></script>
+    <script src="./js/linkedinshuttle.js"></script>
+  </body>
+</html>
