@@ -1,9 +1,6 @@
 $(function() {
   var infoElem          = $('#info'),
-      distanceProxyUrl  = 'http://koo.no.de/distanceproxy/',
-      rawDistanceProxyUrl = 'http://koo.no.de/rawdistanceproxy/',
-      closestStopUrl    = 'http://koo.no.de/closestdistance/',
-      networkFleetUrl   = 'http://64.87.15.235/networkfleetcar/getfleetgpsinfoextended?u=linked-in&p=linkedin',
+      networkFleetUrl   = 'http://50.56.166.75/networkfleetcar/getfleetgpsinfoextended?u=linked-in&p=linkedin',
       li_latlng         = '37.423327,-122.071152',
       isSouthbound,
       map,
@@ -225,7 +222,8 @@ $(function() {
     var i, len;
 
     shuttleLatLng = attr.Latitude + ',' + attr.Longitude;
-    setupStopChooser();
+    // GK: commented this to remove dependency on server
+    //setupStopChooser();
 
     drawMap(attr.Latitude, attr.Longitude);
 
@@ -340,17 +338,18 @@ $(function() {
 
     $("#refresh").click(function() {
       $('#stopChooser').trigger('change');
+      updateShuttleLocation();
     });
   },
 
   setupPolling = function() {
     //Data actually does not refresh any faster than 1 minute intervals
     setTimeout(function() {
-      executePoll();
+      updateShuttleLocation();
     },60000);
   },
 
-  executePoll = function() {
+  updateShuttleLocation = function() {
     //Update shuttle loc
     $.ajax(networkFleetUrl, {
       crossDomain: true,

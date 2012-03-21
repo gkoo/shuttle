@@ -22,7 +22,7 @@
     <script src="http://maps.google.com/maps/api/js?sensor=true" type="text/javascript"></script>
   </head>
   <body>
-    
+
     <header>
       <div id="infoContainer" class="speed-data">
         <div id="info">
@@ -33,6 +33,8 @@
           </ul>
           <div class="thinking">...</div>
         </div>
+        <!-- GK: commented to remove dependency on server -->
+        <!--
         <select id="stopChooser">
           <option value="0">Lombard &amp; Fillmore</option>
           <option value="1">Union &amp; Van Ness</option>
@@ -46,17 +48,18 @@
           <option value="9">LinkedIn Sales Development</option>
           <option value="10" selected="selected">LinkedIn Campus</option>
         </select>
+        -->
       </div>
     </header>
-    
+
     <div id="touch-init">
       <canvas id="in-bug" width="100" height="100"></canvas>
       <img alt="" id="in-image" style="display: none" />
       <canvas id="spinner" width="36" height="36"></canvas>
     </div>
-    
+
     <div id="map_canvas"></div>
-    
+
     <nav>
       <ul>
         <li><a id="youLoc" href="#"><img src="img/arrowbuttonicon.png" alt="Jump to your location"/></a></li>
