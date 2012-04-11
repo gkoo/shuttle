@@ -232,8 +232,8 @@ $(function() {
                            .css('display', 'inline');
   },
 
-  centerMap = function(lat, long) {
-    map.setCenter(new google.maps.LatLng(lat, long));
+  centerMap = function(lat, longitude) {
+    map.setCenter(new google.maps.LatLng(lat, longitude));
   },
 
   addStops = function() {
