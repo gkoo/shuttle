@@ -1,8 +1,8 @@
 @font-face {
     font-family: 'TenacityRegular';
-    src: url('tenacity-webfont.woff') format('woff'),
-         url('tenacity-webfont.ttf') format('truetype'),
-         url('tenacity-webfont.svg#TenacityRegular') format('svg');
+    src: url('css/tenacity-webfont.woff') format('woff'),
+         url('css/tenacity-webfont.ttf') format('truetype'),
+         url('css/tenacity-webfont.svg#TenacityRegular') format('svg');
     font-weight: normal;
     font-style: normal;
 
@@ -10,9 +10,9 @@
 
 @font-face {
     font-family: 'TenacityBold';
-    src: url('tenab___-webfont.woff') format('woff'),
-         url('tenab___-webfont.ttf') format('truetype'),
-         url('tenab___-webfont.svg#TenacityBold') format('svg');
+    src: url('css/tenab___-webfont.woff') format('woff'),
+         url('css/tenab___-webfont.ttf') format('truetype'),
+         url('css/tenab___-webfont.svg#TenacityBold') format('svg');
     font-weight: normal;
     font-style: normal;
 
