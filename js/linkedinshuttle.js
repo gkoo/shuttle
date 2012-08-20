@@ -1,6 +1,6 @@
 $(function() {
   var infoElem          = $('#info'),
-      networkFleetUrl   = 'http://50.56.166.75/networkfleetcar/getfleetgpsinfoextended?u=linked-in&p=linkedin',
+      networkFleetUrl   = 'http://50.56.166.75/networkfleetcar/getfleetgpsinfoextended?u=linked-in&p=linbauer',
       li_latlng         = '37.423327,-122.071152',
       isSouthbound,
       map,
